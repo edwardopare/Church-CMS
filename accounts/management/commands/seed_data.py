@@ -159,7 +159,7 @@ class Command(BaseCommand):
                 'event_type': etype,
                 'start_datetime': timezone.now() + timedelta(days=days_ahead),
                 'end_datetime': timezone.now() + timedelta(days=days_ahead, hours=3),
-                'location': 'Grace Church Auditorium',
+                'location': 'Church of Christ West Hills City Auditorium',
                 'organizer': admin,
                 'is_public': True,
                 'requires_registration': etype == 'conference',
@@ -180,7 +180,7 @@ class Command(BaseCommand):
             })
 
         # ── Announcement ──
-        Announcement.objects.get_or_create(title='Welcome to Grace Church CMS', defaults={
+        Announcement.objects.get_or_create(title='Welcome to Church of Christ West Hills City CMS', defaults={
             'content': 'This system is live! Use the sidebar to navigate all modules. '
                        'Contact the admin if you need help with your role or permissions.',
             'author': admin, 'priority': 'high', 'is_published': True,

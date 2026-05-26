@@ -1,6 +1,6 @@
-# Grace Church Management System
+# Church of Christ West Hills City Management System
 
-A complete, production-ready Church Management System built with Django, Bootstrap 5, and SQLite.
+A complete, production-ready Church Management System built with Django, Bootstrap 5, and PostgreSQL.
 
 ---
 
