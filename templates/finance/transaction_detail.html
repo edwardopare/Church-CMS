@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Transaction Detail{% endblock %}
+{% block page_title %}Transaction Detail{% endblock %}
+{% block nav_transactions %}active{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Receipt / Transaction Record</h5>
+        <span class="badge {% if transaction.is_income %}bg-success{% else %}bg-danger{% endif %} fs-6">{{ transaction.get_transaction_type_display }}</span>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-6"><small class="text-muted">Reference</small><div class="font-monospace small">{{ transaction.reference }}</div></div>
+          <div class="col-6"><small class="text-muted">Date</small><div>{{ transaction.date|date:"N j, Y" }}</div></div>
+          <div class="col-6"><small class="text-muted">Member</small><div>{% if transaction.anonymous %}Anonymous{% else %}{{ transaction.member.get_full_name|default:"—" }}{% endif %}</div></div>
+          <div class="col-6"><small class="text-muted">Fund Category</small><div>{{ transaction.fund_category.name|default:"—" }}</div></div>
+          <div class="col-6"><small class="text-muted">Payment Method</small><div>{{ transaction.get_payment_method_display }}</div></div>
+          <div class="col-6"><small class="text-muted">Recorded By</small><div>{{ transaction.recorded_by.get_full_name|default:"—" }}</div></div>
+        </div>
+        <hr/>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-bold fs-5">Amount</span>
+          <span class="fw-bold fs-4 {% if not transaction.is_income %}text-danger{% else %}text-success{% endif %}">GHS {{ transaction.amount|floatformat:2 }}</span>
+        </div>
+        {% if transaction.description %}<hr/><p class="text-muted">{{ transaction.description }}</p>{% endif %}
+      </div>
+      <div class="card-footer">
+        <a href="{% url 'transaction_list' %}" class="btn btn-outline-secondary btn-sm">Back to List</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

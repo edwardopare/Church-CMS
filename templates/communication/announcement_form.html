@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Post Announcement{% endblock %}
+{% block page_title %}Post Announcement{% endblock %}
+{% block nav_announcements %}active{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header"><h5>New Announcement</h5></div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row g-3">
+            {% for field in form %}
+            <div class="col-12"><label>{{ field.label }}</label>{{ field }}
+              {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          <div class="mt-4">
+            <button type="submit" class="btn btn-gold">Publish</button>
+            <a href="{% url 'announcement_list' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

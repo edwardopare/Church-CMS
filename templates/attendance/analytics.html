@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Attendance Analytics{% endblock %}
+{% block page_title %}Attendance Analytics{% endblock %}
+{% block nav_attendance %}active{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header"><h5>Weekly Attendance (Last 8 Weeks)</h5></div>
+      <div class="card-body"><canvas id="weeklyChart" height="100"></canvas></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header"><h5>Sessions by Service Type</h5></div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Service</th><th>Sessions</th></tr></thead>
+          <tbody>
+            {% for s in service_stats %}
+            <tr>
+              <td>{{ s.name }}</td>
+              <td><span class="badge bg-primary">{{ s.total_sessions }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const weeks = {{ weeks|safe }};
+new Chart(document.getElementById('weeklyChart'), {
+  type: 'line',
+  data: {
+    labels: weeks.map(w => w.label),
+    datasets: [{
+      label: 'Attendance',
+      data: weeks.map(w => w.count),
+      borderColor: '#d4a843',
+      backgroundColor: 'rgba(212,168,67,.1)',
+      fill: true,
+      tension: .4,
+      pointBackgroundColor: '#d4a843',
+      pointRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+  }
+});
+</script>
+{% endblock %}

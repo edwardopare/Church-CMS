@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Visitors{% endblock %}
+{% block page_title %}Visitor Tracking{% endblock %}
+{% block nav_visitors %}active{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5>Visitors ({{ visitors.count }})</h5>
+    <a href="{% url 'visitor_create' %}" class="btn btn-gold btn-sm"><i class="fas fa-plus me-1"></i>Record Visitor</a>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Name</th><th>Visit Date</th><th>Contact</th><th>Status</th><th>Assigned To</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for v in visitors %}
+        <tr>
+          <td><strong>{{ v.first_name }} {{ v.last_name }}</strong></td>
+          <td>{{ v.visit_date|date:"M d, Y" }}</td>
+          <td class="text-muted small">{{ v.email|default:v.phone|default:"—" }}</td>
+          <td>
+            {% if v.status == 'converted' %}<span class="badge bg-success">Converted</span>
+            {% elif v.status == 'interested' %}<span class="badge bg-info text-dark">Interested</span>
+            {% elif v.status == 'returning' %}<span class="badge bg-primary">Returning</span>
+            {% else %}<span class="badge bg-secondary">New</span>{% endif %}
+          </td>
+          <td>{{ v.assigned_to.get_full_name|default:"—" }}</td>
+          <td><a href="{% url 'visitor_edit' v.pk %}" class="btn btn-sm btn-outline-primary">Edit</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center py-4 text-muted">No visitors recorded.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

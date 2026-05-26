@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ ministry.name }}{% endblock %}
+{% block page_title %}Ministry Detail{% endblock %}
+{% block nav_ministries %}active{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h4 style="font-family:Playfair Display,serif;">{{ ministry.name }}</h4>
+        {% if ministry.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+        <hr/>
+        <small class="text-muted d-block">Leader</small>
+        <strong>{{ ministry.leader.get_full_name|default:"Not assigned" }}</strong>
+        {% if ministry.meeting_schedule %}
+        <hr/>
+        <small class="text-muted d-block">Meeting Schedule</small>
+        <span>{{ ministry.meeting_schedule }}</span>
+        {% endif %}
+        {% if ministry.description %}
+        <hr/>
+        <p class="text-muted small">{{ ministry.description }}</p>
+        {% endif %}
+        {% if user.is_ministry_leader %}
+        <hr/>
+        <a href="{% url 'ministry_edit' ministry.pk %}" class="btn btn-gold btn-sm w-100">Edit Ministry</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Members ({{ memberships.count }})</h5>
+        {% if user.is_ministry_leader %}
+        <button class="btn btn-gold btn-sm" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+          <i class="fas fa-user-plus me-1"></i>Add Member
+        </button>
+        {% endif %}
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th>Name</th><th>Role</th><th>Joined</th></tr></thead>
+          <tbody>
+            {% for m in memberships %}
+            <tr>
+              <td>{{ m.member.get_full_name }}</td>
+              <td><span class="badge bg-light text-dark">{{ m.get_role_display }}</span></td>
+              <td class="text-muted small">{{ m.joined_date|date:"M d, Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="text-center py-3 text-muted">No members yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if user.is_ministry_leader %}
+<div class="modal fade" id="addMemberModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Add Member to {{ ministry.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" action="{% url 'add_ministry_member' ministry.pk %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label>Select Member</label>
+            <select name="member_id" class="form-control">
+              {% for u in request.user|get_all_users %}
+              <option value="{{ u.pk }}">{{ u.get_full_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Role</label>
+            <select name="role" class="form-control">
+              <option value="member">Member</option>
+              <option value="assistant">Assistant Leader</option>
+              <option value="leader">Leader</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-gold">Add</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

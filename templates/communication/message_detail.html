@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ msg.subject }}{% endblock %}
+{% block page_title %}Message{% endblock %}
+{% block nav_inbox %}active{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-header">
+        <h5>{{ msg.subject }}</h5>
+        <small class="text-muted">From: {{ msg.sender.get_full_name }} &middot; {{ msg.sent_at|date:"N j, Y · g:i A" }}</small>
+      </div>
+      <div class="card-body" style="min-height:150px;white-space:pre-line;">{{ msg.body }}</div>
+      <div class="card-footer">
+        <a href="{% url 'send_message' %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-reply me-1"></i>Reply</a>
+        <a href="{% url 'inbox' %}" class="btn btn-outline-secondary btn-sm ms-2">Back to Inbox</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

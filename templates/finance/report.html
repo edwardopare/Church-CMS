@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Financial Report{% endblock %}
+{% block page_title %}Financial Report{% endblock %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-header"><h5>12-Month Income vs Expense Summary</h5></div>
+  <div class="card-body"><canvas id="finChart" height="80"></canvas></div>
+</div>
+<div class="card">
+  <div class="card-header"><h5>Monthly Breakdown</h5></div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Month</th><th>Income</th><th>Expenses</th><th>Net</th></tr></thead>
+      <tbody>
+        {% for m in months %}
+        <tr>
+          <td>{{ m.label }}</td>
+          <td class="text-success">GHS {{ m.income|floatformat:2 }}</td>
+          <td class="text-danger">GHS {{ m.expense|floatformat:2 }}</td>
+          <td class="fw-bold {% if m.net >= 0 %}text-success{% else %}text-danger{% endif %}">GHS {{ m.net|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const months = {{ months|safe }};
+new Chart(document.getElementById('finChart'), {
+  type: 'bar',
+  data: {
+    labels: months.map(m => m.label),
+    datasets: [
+      { label: 'Income', data: months.map(m => m.income), backgroundColor: 'rgba(5,150,105,.7)', borderRadius: 4 },
+      { label: 'Expenses', data: months.map(m => m.expense), backgroundColor: 'rgba(220,38,38,.6)', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}

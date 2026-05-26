@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports & Analytics{% endblock %}
+{% block nav_reports %}active{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+      <div><div class="stat-value">{{ total_members }}</div><div class="stat-label">Total Members</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+      <div><div class="stat-value">{{ active_members }}</div><div class="stat-label">Active Members</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-user-plus"></i></div>
+      <div><div class="stat-value">{{ new_this_month }}</div><div class="stat-label">New This Month</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon purple"><i class="fas fa-church"></i></div>
+      <div><div class="stat-value">{{ ministry_count }}</div><div class="stat-label">Active Ministries</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fas fa-clipboard-check"></i></div>
+      <div><div class="stat-value">{{ attendance_30 }}</div><div class="stat-label">Attendance (30 days)</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fas fa-coins"></i></div>
+      <div><div class="stat-value">GHS {{ monthly_income|floatformat:0 }}</div><div class="stat-label">Monthly Income</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fas fa-user-clock"></i></div>
+      <div><div class="stat-value">{{ total_visitors }}</div><div class="stat-label">Total Visitors</div></div>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="stat-card">
+      <div class="stat-icon gold"><i class="fas fa-handshake"></i></div>
+      <div><div class="stat-value">{{ conversion_rate }}%</div><div class="stat-label">Visitor Conversion</div></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header"><h5>Membership Growth (Last 6 Months)</h5></div>
+  <div class="card-body"><canvas id="growthChart" height="80"></canvas></div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const growth = {{ growth|safe }};
+new Chart(document.getElementById('growthChart'), {
+  type: 'line',
+  data: {
+    labels: growth.map(g => g.label),
+    datasets: [{
+      label: 'Total Members',
+      data: growth.map(g => g.count),
+      borderColor: '#2563eb',
+      backgroundColor: 'rgba(37,99,235,.08)',
+      fill: true,
+      tension: .4,
+      pointRadius: 5,
+      pointBackgroundColor: '#2563eb',
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: false, ticks: { precision: 0 } } }
+  }
+});
+</script>
+{% endblock %}

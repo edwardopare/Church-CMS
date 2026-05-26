@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Register — Grace Church CMS</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    body{background:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"DM Sans",sans-serif;padding:20px}
+    .rc{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    .brand{text-align:center;margin-bottom:24px}
+    .form-control:focus{border-color:#d4a843;box-shadow:0 0 0 3px rgba(212,168,67,.15)}
+    .btn-reg{background:#d4a843;border:none;color:#fff;font-weight:600;padding:12px;border-radius:8px;width:100%}
+    .btn-reg:hover{background:#c89a35;color:#fff}
+    label{font-size:.85rem;font-weight:500;color:#374151}
+  </style>
+</head>
+<body>
+  <div class="rc">
+    <div class="brand">
+      <div style="font-size:2rem;color:#d4a843;">&#10013;</div>
+      <h1 style="font-family:Playfair Display,serif;font-size:1.4rem;color:#0f172a;">Create Account</h1>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-6"><label>First Name</label>{{ form.first_name }}</div>
+        <div class="col-6"><label>Last Name</label>{{ form.last_name }}</div>
+        <div class="col-12"><label>Username</label>{{ form.username }}</div>
+        <div class="col-12"><label>Email</label>{{ form.email }}</div>
+        <div class="col-12"><label>Phone</label>{{ form.phone }}</div>
+        <div class="col-12"><label>Password</label>{{ form.password1 }}</div>
+        <div class="col-12"><label>Confirm Password</label>{{ form.password2 }}</div>
+      </div>
+      {% if form.errors %}
+      <div class="alert alert-danger mt-3">
+        {% for field in form %}{% for e in field.errors %}<div>{{ e }}</div>{% endfor %}{% endfor %}
+      </div>
+      {% endif %}
+      <button type="submit" class="btn-reg mt-4">Create Account</button>
+    </form>
+    <div class="text-center mt-3">
+      <small class="text-muted">Have an account? <a href="{% url 'login' %}">Sign in</a></small>
+    </div>
+  </div>
+</body>
+</html>

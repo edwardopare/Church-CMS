@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Take Attendance{% endblock %}
+{% block page_title %}Take Attendance{% endblock %}
+{% block nav_attendance %}active{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header"><h5>Record Attendance</h5></div>
+  <div class="card-body">
+    <form method="post" id="attendanceForm">
+      {% csrf_token %}
+      <div class="row g-3 mb-4">
+        {% for field in form %}
+        <div class="col-md-4"><label>{{ field.label }}</label>{{ field }}</div>
+        {% endfor %}
+      </div>
+      <hr/>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Select Present Members</h6>
+        <div>
+          <button type="button" class="btn btn-sm btn-outline-success me-2" onclick="checkAll(true)">Mark All</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="checkAll(false)">Clear All</button>
+        </div>
+      </div>
+      <div class="row g-2" id="memberList">
+        {% for member in members %}
+        <div class="col-md-3 col-6">
+          <div class="form-check p-2 border rounded" style="cursor:pointer;" onclick="toggleCheck(this)">
+            <input class="form-check-input member-check" type="checkbox" name="member_{{ member.id }}" id="m_{{ member.id }}"/>
+            <label class="form-check-label" for="m_{{ member.id }}" style="cursor:pointer;font-size:.85rem;">
+              {{ member.get_full_name }}
+            </label>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="mt-4">
+        <button type="submit" class="btn btn-gold">Save Attendance</button>
+        <a href="{% url 'attendance_list' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+        <span class="ms-3 text-muted small" id="countDisplay">0 selected</span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function checkAll(v) {
+  document.querySelectorAll('.member-check').forEach(c => { c.checked = v; c.closest('.form-check').style.background = v ? '#d1fae5' : ''; });
+  updateCount();
+}
+function toggleCheck(el) {
+  const cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+  el.style.background = cb.checked ? '#d1fae5' : '';
+  updateCount();
+}
+function updateCount() {
+  const n = document.querySelectorAll('.member-check:checked').length;
+  document.getElementById('countDisplay').textContent = n + ' selected';
+}
+document.querySelectorAll('.member-check').forEach(c => {
+  c.addEventListener('change', updateCount);
+});
+</script>
+{% endblock %}

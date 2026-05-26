@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Members{% endblock %}
+{% block page_title %}Member Directory{% endblock %}
+{% block nav_members %}active{% endblock %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 align-items-center">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search name, number, email..." class="form-control form-control-sm" style="max-width:300px;"/>
+      <select name="status" class="form-select form-select-sm" style="max-width:160px;">
+        <option value="">All Statuses</option>
+        <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+        <option value="transferred" {% if status == 'transferred' %}selected{% endif %}>Transferred</option>
+      </select>
+      <button class="btn btn-gold btn-sm" type="submit">Search</button>
+      {% if query or status %}<a href="{% url 'member_list' %}" class="btn btn-outline-secondary btn-sm">Clear</a>{% endif %}
+    </form>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5>Members ({{ total }})</h5>
+    {% if user.can_manage_members %}<a href="{% url 'member_create' %}" class="btn btn-gold btn-sm"><i class="fas fa-plus me-1"></i>Add Member</a>{% endif %}
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>No.</th><th>Name</th><th>Family</th><th>Status</th><th>Baptised</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for m in members %}
+        <tr>
+          <td class="text-muted" style="font-size:.8rem;">{{ m.membership_number }}</td>
+          <td>
+            <strong>{{ m.user.get_full_name }}</strong>
+            {% if m.user.email %}<div class="text-muted" style="font-size:.75rem;">{{ m.user.email }}</div>{% endif %}
+          </td>
+          <td>{{ m.family.name|default:"—" }}</td>
+          <td>
+            {% if m.membership_status == 'active' %}<span class="badge bg-success">Active</span>
+            {% elif m.membership_status == 'inactive' %}<span class="badge bg-secondary">Inactive</span>
+            {% else %}<span class="badge bg-warning text-dark">{{ m.get_membership_status_display }}</span>{% endif %}
+          </td>
+          <td>{% if m.is_baptised %}<i class="fas fa-check text-success"></i>{% else %}<i class="fas fa-times text-muted"></i>{% endif %}</td>
+          <td>
+            <a href="{% url 'member_detail' m.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+            {% if user.can_manage_members %}<a href="{% url 'member_edit' m.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center py-4 text-muted">No members found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

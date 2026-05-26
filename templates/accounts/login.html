@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Login — Church of Christ CMS</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    body{background:#0f172a;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:"DM Sans",sans-serif}
+    .lc{background:#fff;border-radius:16px;padding:48px 40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    .brand{text-align:center;margin-bottom:32px}
+    .brand h1{font-family:"Playfair Display",serif;font-size:1.5rem;color:#0f172a;margin:8px 0 4px}
+    .form-control:focus{border-color:#d4a843;box-shadow:0 0 0 3px rgba(212,168,67,.15)}
+    .btn-login{background:#d4a843;border:none;color:#fff;font-weight:600;padding:12px;font-size:1rem;border-radius:8px;width:100%}
+    .btn-login:hover{background:#c89a35;color:#fff}
+    label{font-size:.85rem;font-weight:500;color:#374151}
+  </style>
+</head>
+<body>
+  <div class="lc">
+    <div class="brand">
+      <div style="font-size:2.5rem;color:#d4a843;">&#10013;</div>
+      <h1>Church of Christ</h1>
+      <p class="text-muted small">Sign in to your account</p>
+    </div>
+    {% if form.errors %}<div class="alert alert-danger">Invalid username or password.</div>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3"><label>Username</label>{{ form.username }}</div>
+      <div class="mb-4"><label>Password</label>{{ form.password }}</div>
+      <button type="submit" class="btn-login">Sign In</button>
+    </form>
+    <div class="text-center mt-3">
+      <small class="text-muted">No account? <a href="{% url 'register' %}">Register</a></small>
+    </div>
+  </div>
+</body>
+</html>

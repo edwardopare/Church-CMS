@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Event Calendar{% endblock %}
+{% block page_title %}Event Calendar{% endblock %}
+{% block nav_events %}active{% endblock %}
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div id="calendar"></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script>
+const eventsData = {{ events_json|safe }};
+$(document).ready(function() {
+  $('#calendar').fullCalendar({
+    header: { left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay' },
+    events: eventsData.map(e => ({
+      id: e.id,
+      title: e.title,
+      start: e.start_datetime,
+      end: e.end_datetime,
+      url: '/events/' + e.id + '/',
+      color: e.event_type === 'service' ? '#2563eb' : e.event_type === 'conference' ? '#7c3aed' : '#d4a843',
+    })),
+    eventClick: function(event) {
+      if (event.url) { window.location.href = event.url; return false; }
+    },
+    height: 650,
+    editable: false,
+    eventLimit: true,
+  });
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% endblock %}

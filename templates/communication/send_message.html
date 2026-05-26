@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Send Message{% endblock %}
+{% block page_title %}Send Message{% endblock %}
+{% block nav_inbox %}active{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header"><h5>Compose Message</h5></div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-3"><label>{{ field.label }}</label>{{ field }}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-gold"><i class="fas fa-paper-plane me-2"></i>Send</button>
+          <a href="{% url 'inbox' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

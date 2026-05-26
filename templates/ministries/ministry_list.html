@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Ministries{% endblock %}
+{% block page_title %}Ministries{% endblock %}
+{% block nav_ministries %}active{% endblock %}
+{% block content %}
+<div class="row g-3">
+  {% if user.is_ministry_leader %}
+  <div class="col-12 d-flex justify-content-end">
+    <a href="{% url 'ministry_create' %}" class="btn btn-gold btn-sm"><i class="fas fa-plus me-1"></i>New Ministry</a>
+  </div>
+  {% endif %}
+  {% for ministry in ministries %}
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 style="font-family:Playfair Display,serif;">{{ ministry.name }}</h5>
+          {% if ministry.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+        </div>
+        <p class="text-muted small">{{ ministry.description|truncatewords:20|default:"No description." }}</p>
+        <div class="d-flex gap-3 small text-muted">
+          <span><i class="fas fa-user-tie me-1"></i>{{ ministry.leader.get_full_name|default:"No leader" }}</span>
+          <span><i class="fas fa-users me-1"></i>{{ ministry.memberships.count }} members</span>
+        </div>
+        {% if ministry.meeting_schedule %}
+        <div class="small text-muted mt-1"><i class="fas fa-clock me-1"></i>{{ ministry.meeting_schedule }}</div>
+        {% endif %}
+      </div>
+      <div class="card-footer bg-transparent">
+        <a href="{% url 'ministry_detail' ministry.pk %}" class="btn btn-sm btn-outline-primary">View Details</a>
+        {% if user.is_ministry_leader %}
+        <a href="{% url 'ministry_edit' ministry.pk %}" class="btn btn-sm btn-outline-secondary ms-1">Edit</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-5 text-muted">
+    <i class="fas fa-church fa-3x mb-3 d-block"></i>No ministries yet.
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Delete Member{% endblock %}
+{% block page_title %}Delete Member{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger">
+      <div class="card-header bg-danger text-white"><h5 class="mb-0">Confirm Deletion</h5></div>
+      <div class="card-body">
+        <p>Are you sure you want to delete <strong>{{ member.user.get_full_name }}</strong> ({{ member.membership_number }})?</p>
+        <p class="text-danger small">This action cannot be undone.</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Yes, Delete</button>
+          <a href="{% url 'member_list' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
