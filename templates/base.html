@@ -97,6 +97,8 @@
     #topbar .badge-notif {
       background: var(--gold); color: #fff; font-size: .65rem;
       padding: 2px 6px; border-radius: 10px; font-weight: 700;
+      min-width: 20px; text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,.2);
     }
 
     /* ── Page content ── */
@@ -287,8 +289,16 @@
       <a href="{% url 'event_calendar' %}" class="text-muted" title="Calendar"><i class="fas fa-calendar"></i></a>
       <a href="{% url 'inbox' %}" class="text-muted position-relative" title="Messages">
         <i class="fas fa-envelope"></i>
+        {% if unread_messages_count > 0 %}
+        <span class="badge-notif position-absolute top-0 start-100 translate-middle">{{ unread_messages_count }}</span>
+        {% endif %}
       </a>
-      <a href="{% url 'announcement_list' %}" class="text-muted" title="Announcements"><i class="fas fa-bell"></i></a>
+      <a href="{% url 'announcement_list' %}" class="text-muted position-relative" title="Announcements">
+        <i class="fas fa-bell"></i>
+        {% if unread_announcements_count > 0 %}
+        <span class="badge-notif position-absolute top-0 start-100 translate-middle">{{ unread_announcements_count }}</span>
+        {% endif %}
+      </a>
       <a href="{% url 'profile' %}" class="text-muted" title="Profile"><i class="fas fa-user-circle"></i></a>
     </div>
   </div>
