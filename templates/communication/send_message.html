@@ -3,8 +3,20 @@
 {% block page_title %}Send Message{% endblock %}
 {% block nav_inbox %}active{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-7">
+
+{% if messages %}
+<div class="mb-4">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-5">
     <div class="card">
       <div class="card-header"><h5>Compose Message</h5></div>
       <div class="card-body">
@@ -16,10 +28,53 @@
           </div>
           {% endfor %}
           <button type="submit" class="btn btn-gold"><i class="fas fa-paper-plane me-2"></i>Send</button>
-          <a href="{% url 'inbox' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+          <a href="{% url 'inbox' %}" class="btn btn-outline-secondary ms-2">Inbox</a>
         </form>
       </div>
     </div>
   </div>
+
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header"><h5>Sent Messages</h5></div>
+      <div class="card-body">
+        {% if sent_messages %}
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Recipient</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for msg in sent_messages %}
+              <tr title="{{ msg.body|truncatewords:20 }}" style="cursor: pointer;" data-bs-toggle="tooltip">
+                <td>{{ msg.recipient.get_full_name }}</td>
+                <td>{{ msg.subject }}</td>
+                <td>{{ msg.sent_at|date:"M d, Y" }}</td>
+                <td>{{ msg.sent_at|time:"h:i A" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">No sent messages yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  // Enable tooltips for message preview
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+</script>
+
 {% endblock %}

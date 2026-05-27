@@ -71,8 +71,11 @@ def send_message(request):
         msg.sender = request.user
         msg.save()
         messages.success(request, f'Message sent to {msg.recipient.get_full_name()}.')
-        return redirect('inbox')
-    return render(request, 'communication/send_message.html', {'form': form})
+        form = MessageForm()  # Reset form after successful submission
+    
+    # Get sent messages for this user
+    sent = Message.objects.filter(sender=request.user).select_related('recipient').order_by('-sent_at')
+    return render(request, 'communication/send_message.html', {'form': form, 'sent_messages': sent})
 
 
 @login_required
