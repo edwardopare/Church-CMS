@@ -61,10 +61,11 @@ DATABASES = {
         'NAME': config('DB_NAME', default='neondb'),
         'USER': config('DB_USER', default='neondb_owner'),
         'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
+        'HOST': config('DB_HOST', default='ep-icy-dust-aq4u7wvn.c-8.us-east-1.aws.neon.tech'),
         'PORT': config('DB_PORT', default='5432'),
         'OPTIONS': {
             'sslmode': 'require',
+            'connect_timeout': 10,
         }
     }
 }
