@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Grace Church CMS{% endblock %}</title>
+  <title>{% block title %}Church of Christ - RedTop CMS{% endblock %}</title>
   {% load static %}
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
@@ -102,7 +102,7 @@
 {% if user.is_authenticated %}
 <aside id="sidebar">
   <div class="brand">
-    <h1>&#10013; Grace Church</h1>
+    <h1>&#10013; Church of Christ - RedTop</h1>
     <small>Management System</small>
   </div>
   <nav>
@@ -220,8 +220,22 @@
 
     {% block content %}{% endblock %}
   </div>
-</div>
+    </div>
+  </div>
 
+{% else %}
+  <div class="simple-body">
+    <div class="page-body container mt-5">
+{% endif %}
+
+    {% block content %}{% endblock %}
+
+{% if user.is_authenticated %}
+    </div>
+  </div>
+{% else %}
+    </div>
+  </div>
 {% endif %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
