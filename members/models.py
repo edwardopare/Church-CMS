@@ -1,28 +1,13 @@
 """
 Member Management models.
-Handles family groups, baptism/confirmation records, and membership tracking.
+Members are stored directly (no system user account required).
 """
 from django.db import models
 from accounts.models import CustomUser
 
 
-class Family(models.Model):
-    """Groups members into a family unit."""
-    name = models.CharField(max_length=100)
-    address = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'Families'
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
 class Member(models.Model):
-    """Extended profile for church members, linked to a CustomUser."""
+    """Church member stored as a standalone record — no system login required."""
     MEMBERSHIP_STATUS = [
         ('active', 'Active'),
         ('inactive', 'Inactive'),
@@ -30,9 +15,18 @@ class Member(models.Model):
         ('deceased', 'Deceased'),
         ('suspended', 'Suspended'),
     ]
+    GENDER_CHOICES = [('M', 'Male'), ('F', 'Female'), ('O', 'Other')]
 
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='member_profile')
-    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True, related_name='members')
+    # Personal info directly on the member (no linked user account)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    address = models.TextField(blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
+    profile_photo = models.ImageField(upload_to='members/', blank=True, null=True)
+
     membership_number = models.CharField(max_length=20, unique=True, blank=True)
     membership_status = models.CharField(max_length=20, choices=MEMBERSHIP_STATUS, default='active')
     membership_date = models.DateField(null=True, blank=True)
@@ -50,13 +44,15 @@ class Member(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['user__last_name', 'user__first_name']
+        ordering = ['last_name', 'first_name']
+
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
 
     def __str__(self):
-        return f"{self.user.get_full_name()} - {self.membership_number}"
+        return f"{self.get_full_name()} - {self.membership_number}"
 
     def save(self, *args, **kwargs):
-        # Auto-generate membership number if not set
         if not self.membership_number:
             last = Member.objects.order_by('-id').first()
             next_id = (last.id + 1) if last else 1
@@ -84,7 +80,11 @@ class Visitor(models.Model):
     follow_up_date = models.DateField(null=True, blank=True)
     follow_up_notes = models.TextField(blank=True)
     assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
-    converted_member = models.ForeignKey(Member, on_delete=models.SET_NULL, null=True, blank=True)
+    # Change 8: plain text instead of FK to Member/User
+    converted_member_name = models.CharField(
+        max_length=200, blank=True,
+        help_text='If converted, enter the member name'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

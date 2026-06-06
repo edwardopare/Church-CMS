@@ -6,7 +6,7 @@ urlpatterns = [
     path('transactions/', views.transaction_list, name='transaction_list'),
     path('transactions/create/', views.transaction_create, name='transaction_create'),
     path('transactions/<int:pk>/', views.transaction_detail, name='transaction_detail'),
-    path('pledges/', views.pledge_list, name='pledge_list'),
-    path('pledges/create/', views.pledge_create, name='pledge_create'),
+    # Pledges removed (Change 6)
     path('report/', views.financial_report, name='financial_report'),
+    path('report/download/', views.financial_report_download, name='financial_report_download'),
 ]

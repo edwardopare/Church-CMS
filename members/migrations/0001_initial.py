@@ -14,24 +14,19 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='Family',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('address', models.TextField(blank=True)),
-                ('notes', models.TextField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-            ],
-            options={
-                'verbose_name_plural': 'Families',
-                'ordering': ['name'],
-            },
-        ),
+        
         migrations.CreateModel(
             name='Member',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('first_name', models.CharField(max_length=50)),
+                ('last_name', models.CharField(max_length=50)),
+                ('email', models.EmailField(blank=True, max_length=254)),
+                ('phone', models.CharField(blank=True, max_length=20)),
+                ('address', models.TextField(blank=True)),
+                ('date_of_birth', models.DateField(blank=True, null=True)),
+                ('gender', models.CharField(blank=True, max_length=10)),
+                ('profile_photo', models.ImageField(blank=True, null=True, upload_to='members/')),
                 ('membership_number', models.CharField(blank=True, max_length=20, unique=True)),
                 ('membership_status', models.CharField(choices=[('active', 'Active'), ('inactive', 'Inactive'), ('transferred', 'Transferred'), ('deceased', 'Deceased'), ('suspended', 'Suspended')], default='active', max_length=20)),
                 ('membership_date', models.DateField(blank=True, null=True)),
@@ -47,11 +42,10 @@ class Migration(migrations.Migration):
                 ('notes', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('family', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='members', to='members.family')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='member_profile', to=settings.AUTH_USER_MODEL)),
+                # Note: user relation removed in current model
             ],
             options={
-                'ordering': ['user__last_name', 'user__first_name'],
+                'ordering': ['last_name', 'first_name'],
             },
         ),
         migrations.CreateModel(

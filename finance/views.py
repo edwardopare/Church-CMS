@@ -4,8 +4,10 @@ from django.contrib import messages
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from datetime import timedelta, date
-from .models import Transaction, FundCategory, Pledge
-from .forms import TransactionForm, PledgeForm, FundCategoryForm
+from .models import Transaction, FundCategory
+from .forms import TransactionForm, FundCategoryForm
+from django.http import HttpResponse
+import csv
 
 
 def finance_required(view_func):
@@ -133,3 +135,34 @@ def financial_report(request):
         })
 
     return render(request, 'finance/report.html', {'months': months})
+
+
+@finance_required
+def financial_report_download(request):
+    """Return a CSV download of the last 12 months financial summary."""
+    today = timezone.now().date()
+    months = []
+    for i in range(11, -1, -1):
+        m_date = today.replace(day=1) - timedelta(days=i * 30)
+        m_start = m_date.replace(day=1)
+        if m_start.month == 12:
+            m_end = m_start.replace(year=m_start.year + 1, month=1, day=1)
+        else:
+            m_end = m_start.replace(month=m_start.month + 1, day=1)
+        income = Transaction.objects.filter(
+            date__gte=m_start, date__lt=m_end
+        ).exclude(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
+        expense = Transaction.objects.filter(
+            date__gte=m_start, date__lt=m_end,
+            transaction_type='expense'
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        months.append((m_start.strftime('%b %Y'), float(income), float(expense), float(income - expense)))
+
+    # Build CSV
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="financial_report.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['Month', 'Income', 'Expense', 'Net'])
+    for row in months:
+        writer.writerow(row)
+    return response

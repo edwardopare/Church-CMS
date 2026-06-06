@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 {% block title %}Financial Report{% endblock %}
 {% block page_title %}Financial Report{% endblock %}
+{% block nav_fin_report %}active{% endblock %}
 {% block content %}
+<div class="d-flex justify-content-end mb-3">
+  {# Change 7: Download button #}
+  <a href="{% url 'financial_report_download' %}" class="btn btn-gold">
+    <i class="fas fa-download me-2"></i>Download CSV Report
+  </a>
+</div>
 <div class="card mb-3">
   <div class="card-header"><h5>12-Month Income vs Expense Summary</h5></div>
   <div class="card-body"><canvas id="finChart" height="80"></canvas></div>
@@ -10,17 +17,28 @@
   <div class="card-header"><h5>Monthly Breakdown</h5></div>
   <div class="card-body p-0">
     <table class="table table-hover mb-0">
-      <thead><tr><th>Month</th><th>Income</th><th>Expenses</th><th>Net</th></tr></thead>
+      <thead><tr><th>Month</th><th>Income (GHS)</th><th>Expenses (GHS)</th><th>Net (GHS)</th></tr></thead>
       <tbody>
         {% for m in months %}
         <tr>
           <td>{{ m.label }}</td>
-          <td class="text-success">GHS {{ m.income|floatformat:2 }}</td>
-          <td class="text-danger">GHS {{ m.expense|floatformat:2 }}</td>
-          <td class="fw-bold {% if m.net >= 0 %}text-success{% else %}text-danger{% endif %}">GHS {{ m.net|floatformat:2 }}</td>
+          <td class="text-success">{{ m.income|floatformat:2 }}</td>
+          <td class="text-danger">{{ m.expense|floatformat:2 }}</td>
+          <td class="fw-bold {% if m.net >= 0 %}text-success{% else %}text-danger{% endif %}">{{ m.net|floatformat:2 }}</td>
         </tr>
         {% endfor %}
       </tbody>
+      <tfoot class="table-light fw-bold">
+        <tr>
+          <td>TOTAL</td>
+          <td class="text-success">
+            {% with total=0 %}
+              {% for m in months %}{{ m.income|add:total }}{% endfor %}
+            {% endwith %}
+          </td>
+          <td></td><td></td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </div>

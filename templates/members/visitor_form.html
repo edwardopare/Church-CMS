@@ -4,19 +4,29 @@
 {% block nav_visitors %}active{% endblock %}
 {% block content %}
 <div class="card">
-  <div class="card-header"><h5>{% if visitor %}Edit Visitor{% else %}New Visitor{% endif %}</h5></div>
+  <div class="card-header">
+    <h5>{% if visitor %}Edit Visitor{% else %}New Visitor{% endif %}</h5>
+  </div>
   <div class="card-body">
     <form method="post">
       {% csrf_token %}
       <div class="row g-3">
         {% for field in form %}
-        <div class="col-md-6"><label>{{ field.label }}</label>{{ field }}
-          {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+        <div class="col-md-6">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+          <div class="text-danger small mt-1">{{ field.errors }}</div>
+          {% endif %}
+          {# Change 8: Helper text for the converted member name field #}
+          {% if field.name == 'converted_member_name' %}
+          <div class="form-text text-muted">Only fill this in if the visitor has been converted to a church member.</div>
+          {% endif %}
         </div>
         {% endfor %}
       </div>
       <div class="mt-4">
-        <button type="submit" class="btn btn-gold">Save</button>
+        <button type="submit" class="btn btn-gold">Save Visitor</button>
         <a href="{% url 'visitor_list' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
       </div>
     </form>
