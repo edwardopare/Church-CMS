@@ -217,24 +217,29 @@
       {% endfor %}
     </div>
     {% endif %}
+  {% comment %} Shared page-body wrapper: authenticated users get full layout, anonymous users get a centered container {% endcomment %}
+  {% if user.is_authenticated %}
+    <div class="page-body">
+  {% else %}
+    <div class="page-body container mt-5 simple-body">
+  {% endif %}
 
-    {% block content %}{% endblock %}
-  </div>
+    {% if messages %}
+    <div class="messages-container">
+      {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endfor %}
     </div>
-  </div>
-
-{% else %}
-  <div class="simple-body">
-    <div class="page-body container mt-5">
-{% endif %}
+    {% endif %}
 
     {% block content %}{% endblock %}
+
+  </div>
 
 {% if user.is_authenticated %}
-    </div>
-  </div>
-{% else %}
-    </div>
   </div>
 {% endif %}
 
