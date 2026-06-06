@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
         # ── Super Admin ──
         admin, _ = CustomUser.objects.get_or_create(username='admin', defaults={
-            'email': 'admin@gracechurch.org', 'first_name': 'System', 'last_name': 'Admin',
+            'email': 'admin@churchofchrist-redtop.org', 'first_name': 'System', 'last_name': 'Admin',
             'role': 'super_admin', 'is_staff': True, 'is_superuser': True,
         })
         admin.set_password('admin123')
@@ -31,9 +31,9 @@ class Command(BaseCommand):
 
         # ── Staff users ──
         roles = [
-            ('pastor', 'Rev. John', 'Mensah', 'pastor@gracechurch.org', 'pastor'),
-            ('finance_officer', 'Grace', 'Asante', 'finance@gracechurch.org', 'finance_officer'),
-            ('ministry_leader', 'Abena', 'Boateng', 'ministry@gracechurch.org', 'ministry_leader'),
+            ('pastor', 'Rev. John', 'Mensah', 'pastor@churchofchrist-redtop.org', 'pastor'),
+            ('finance_officer', 'Grace', 'Asante', 'finance@churchofchrist-redtop.org', 'finance_officer'),
+            ('ministry_leader', 'Abena', 'Boateng', 'ministry@churchofchrist-redtop.org', 'ministry_leader'),
         ]
         staff_users = []
         for username, fn, ln, email, role in roles:
@@ -135,7 +135,7 @@ class Command(BaseCommand):
                 'event_type': etype,
                 'start_datetime': timezone.now() + timedelta(days=days_ahead),
                 'end_datetime': timezone.now() + timedelta(days=days_ahead, hours=3),
-                'location': 'Grace Church Auditorium',
+                'location': 'Church of Christ - RedTop Auditorium',
                 'organizer': admin,
                 'is_public': True,
                 'requires_registration': etype == 'conference',
@@ -156,7 +156,7 @@ class Command(BaseCommand):
             })
 
         # ── Announcement ──
-        Announcement.objects.get_or_create(title='Welcome to Grace Church CMS', defaults={
+        Announcement.objects.get_or_create(title='Welcome to Church of Christ - RedTop CMS', defaults={
             'content': 'The system is live! Use the sidebar to navigate. Contact admin for role or permissions help.',
             'author': admin, 'priority': 'high', 'is_published': True,
         })
