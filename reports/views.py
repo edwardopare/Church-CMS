@@ -1,11 +1,10 @@
 """Reporting & analytics — membership growth, attendance, finance summaries."""
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Count, Sum, Q
+from django.db.models import Sum
 from django.utils import timezone
 from datetime import timedelta
-from accounts.models import CustomUser
 from members.models import Member, Visitor
 from attendance.models import AttendanceEntry
 from finance.models import Transaction
@@ -19,34 +18,29 @@ def reports_dashboard(request):
         return redirect('dashboard')
 
     today = timezone.now().date()
+    month_start = today.replace(day=1)
 
-    # Membership stats
     total_members = Member.objects.count()
     active_members = Member.objects.filter(membership_status='active').count()
     new_this_month = Member.objects.filter(
-        membership_date__gte=today.replace(day=1)
+        membership_date__gte=month_start
     ).count()
 
-    # Attendance last 30 days
     attendance_30 = AttendanceEntry.objects.filter(
         record__date__gte=today - timedelta(days=30),
         is_present=True
     ).count()
 
-    # Finance summary
-    month_start = today.replace(day=1)
     monthly_income = Transaction.objects.filter(
         date__gte=month_start
     ).exclude(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
 
-    # Ministry count
     ministry_count = Ministry.objects.filter(is_active=True).count()
 
-    # Visitor conversion
     total_visitors = Visitor.objects.count()
     converted = Visitor.objects.filter(status='converted').count()
 
-    # Monthly membership growth (last 6 months)
+    # Membership growth last 6 months
     growth = []
     for i in range(5, -1, -1):
         m_start = (today.replace(day=1) - timedelta(days=i * 30)).replace(day=1)

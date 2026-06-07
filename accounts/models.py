@@ -33,6 +33,15 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return f"{self.get_full_name() or self.username} ({self.get_role_display()})"
 
+    def save(self, *args, **kwargs):
+        # Auto-set role based on superuser status
+        if self.is_superuser:
+            self.role = 'super_admin'
+        elif self.is_staff and self.role == 'member':
+            # Staff members who aren't superuser get church_admin by default
+            self.role = 'church_admin'
+        super().save(*args, **kwargs)
+
     # --- Permission helpers used across templates and views ---
 
     @property

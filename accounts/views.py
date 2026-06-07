@@ -4,7 +4,6 @@ from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-from django.http import JsonResponse
 from .models import CustomUser
 from .forms import RegisterForm, LoginForm, ProfileUpdateForm, UserManagementForm
 
@@ -13,7 +12,7 @@ def register_view(request):
     form = RegisterForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form.is_valid():
         user = form.save(commit=False)
-        user.role = 'member'  # default role
+        user.role = 'member'
         user.save()
         login(request, user)
         messages.success(request, f'Welcome, {user.first_name}! Your account has been created.')
@@ -26,8 +25,10 @@ def login_view(request):
         return redirect('dashboard')
     form = LoginForm(request, data=request.POST or None)
     if request.method == 'POST' and form.is_valid():
-        login(request, form.get_user())
-        messages.success(request, f'Welcome back, {form.get_user().first_name}!')
+        # Fix: capture user before calling login(), then use that reference
+        user = form.get_user()
+        login(request, user)
+        messages.success(request, f'Welcome back, {user.first_name}!')
         return redirect(request.GET.get('next', 'dashboard'))
     return render(request, 'accounts/login.html', {'form': form})
 
@@ -61,7 +62,6 @@ def change_password_view(request):
 
 @login_required
 def user_list_view(request):
-    """Admin view: list all users."""
     if not request.user.is_church_admin:
         messages.error(request, 'Access denied.')
         return redirect('dashboard')
@@ -71,7 +71,6 @@ def user_list_view(request):
 
 @login_required
 def user_edit_view(request, pk):
-    """Admin view: edit a user's role and info."""
     if not request.user.is_church_admin:
         messages.error(request, 'Access denied.')
         return redirect('dashboard')
